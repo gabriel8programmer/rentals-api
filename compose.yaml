@@ -5,8 +5,8 @@ services:
     image: postgres:14
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: rentals
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: db_rentals
     ports:
       - "5432:5432"
     volumes:
@@ -25,7 +25,7 @@ services:
       - postgres
       - redis
     volumes:
-      - .:/app
+      - .:/usr/app
     environment:
       NODE_ENV: development
 
