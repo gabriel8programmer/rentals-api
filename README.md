@@ -1,5 +1,5 @@
 
-<h1 align="center">Api de Aluguéis de imóveis com Node.js (Em Desenvolvimento...)</h1>
+<h1 align="center">API para Gestão de Aluguéis de Imóveis com Node.js (Em Desenvolvimento)</h1>
 
 <p align="center">
   <a href="#instalação">🚀 Instalação</a> •
@@ -10,7 +10,7 @@
 <br/>
 
 <p>
- Esta é uma api completa de gestão de imóveis e aluguel que pode ser utilizada tanto por usuários que desejam alugar o seu imóvel, quanto para administradores e corretores que a utilizaram pra fazer a gestão do sistema
+ Esta é uma API completa para gestão de imóveis e aluguéis, desenvolvida com foco em flexibilidade e eficiência. Ela atende tanto usuários que desejam anunciar seus imóveis para locação, quanto administradores e corretores responsáveis pela gestão do sistema. A API oferece recursos robustos para cadastro, atualização, consulta e controle de propriedades, contratos de aluguel, usuários e mais.
 </p>
 
 <h2>Tecnologias</h2>
@@ -31,7 +31,9 @@
 ### ✅ Requisitos
 
 - [Docker](https://www.docker.com/get-started/) Instalado
-- [Wsl](https://learn.microsoft.com/pt-br/windows/wsl/install) Inslação opcional (Só instá-le caso esteja utilizando Windows)
+- [Wsl](https://learn.microsoft.com/pt-br/windows/wsl/install) (opcional — necessário apenas se estiver utilizando Windows)
+
+> 💡 **Observação:** Caso esteja no Windows, recomenda-se instalar o WSL para melhor compatibilidade com ambientes Linux utilizados em containers Docker.
 
 ---
 
@@ -47,19 +49,19 @@ cd rental-api
 #### 2. Crie o arquivo `.env` com o seguinte formato:
 
 ```env
-PORT=3000 #PADRÃO 3000 MAS VOCÊ PODE TROCÁ-LA NOS ARQUIVOS DE (DOCKERFILE E COMPOSE.YAML)
-DATABASE_URL= #VAI SER CRIADA AUTOMATICAMENTE PELO PRISMA SÓ TERÁ QUE CONFIGURÁ-LA
+PORT=3000 # Porta padrão (pode ser alterada nos arquivos Dockerfile e docker-compose.yaml)
+DATABASE_URL= # Será gerada automaticamente pelo Prisma; basta deixá-la configurada
 ```
 
 ---
 
-#### 3. Rode o [docker compose](https://docs.docker.com/compose/install/) com o seguinte comando:
+#### 3. Rode o [docker compose](https://docs.docker.com/compose/) com o seguinte comando:
 
 ```bash
 docker compose up
 ```
 
-Aviso: Se não tiver as imagens necessárias para o container do docker ele vai instalá-las e isso pode demorar um pouco, garanta um espaço interessante no disco:
+> ⚠️ Se as imagens dos containers ainda não estiverem presentes, o Docker fará o download automaticamente. Isso pode levar alguns minutos, dependendo da sua conexão e espaço em disco. Certifique-se de ter armazenamento suficiente disponível.
 
 ---
 
@@ -86,7 +88,7 @@ Você pode testar as rotas utilizando ferramentas como:
 
 <h2 id="dev">👨‍💻 Desenvolvedor</h2>
 
-Este projeto foi desenvolvido por Gabriel Pereira, com foco em aprendizado de nodejs, express, mongodb e documentação básica de API com swagger.
+Este projeto foi desenvolvido por Gabriel Pereira, com foco em aprendizado de nodejs, fastify, bancos relacionais, cache e arquitetura de software.
 
 <div>
   <img  style="height: 150px" src="https://github.com/user-attachments/assets/c4df01b4-a935-4613-9eb9-aaf04d07b296" alt="Foto de perfil" />
