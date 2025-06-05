@@ -1,5 +1,5 @@
 import prisma from "../database"
-import { Property } from "@prisma/client"
+import { Property, PropertyImage } from "@prisma/client"
 
 interface IProperty {
     title: string
@@ -25,6 +25,11 @@ interface IProperty {
     }
 }
 
+interface IPropertyImage {
+    url: string
+    cover?: boolean
+}
+
 export class PropertiesModel { 
     find = async (): Promise<Property[]> => {
         return prisma.property.findMany({})
@@ -44,5 +49,21 @@ export class PropertiesModel {
 
     delete = async (id: string): Promise<Property | null> => {
         return prisma.property.delete({where: {id} })
+    }
+
+    findImages = async (id: string): Promise<PropertyImage[]> => {
+        return prisma.propertyImage.findMany({where: {propertyId: id} })
+    }
+
+    findImageById = async (id: string, imageId: string): Promise<PropertyImage | null> => {
+        return prisma.propertyImage.findUnique({where: { propertyId: id, id: imageId } })
+    }
+
+    createImage = async (id: string, data: IPropertyImage): Promise<void> => {
+        await prisma.propertyImage.create({ data: {propertyId: id, ...data} })
+    }
+
+    deleteImage = async (id: string, imageId: string): Promise<void> => {
+        await prisma.propertyImage.delete({where: { propertyId: id, id: imageId } })
     }
 }

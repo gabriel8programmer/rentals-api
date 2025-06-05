@@ -15,8 +15,8 @@ const host = "0.0.0.0"
 // register plugins
 
 // register endpoints
-app.register(propertiesRouter)
-app.register(propertyTypesRouter)
+app.register(propertiesRouter, {prefix: "/api"})
+app.register(propertyTypesRouter, {prefix: "/api"})
 
 app.listen({port, host})
 .then(()=> console.log(`Server running on http://${host}:${port}`))

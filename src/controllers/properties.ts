@@ -29,7 +29,13 @@ const CreatePropertySchema = z.object({
 const UpdatePropertySchema = CreatePropertySchema.partial()
 
 const RouteParamsSchema = z.object({
-    id: z.string()
+    id: z.string(),
+    imageId: z.string().optional()
+})
+
+const AddImageSchema = z.object({
+    url: z.string(),
+    cover: z.boolean().default(false)
 })
 
 export class PropertiesController {
@@ -99,4 +105,61 @@ export class PropertiesController {
             return reply.status(500).send({message: error.message})
         }
     }
+
+    images: RouteHandler = async (request, reply)=> {
+        try {
+            const { id } = RouteParamsSchema.parse(request.params)
+            const property = await this.model.findById(id)
+
+            //validate property id
+            if (!property) return reply.status(404).send({message: "Property not found!"})
+
+            return await this.model.findImages(id)
+            
+        } catch (error: any) {
+            return reply.status(500).send({message: error.message})
+        }
+    }
+
+    addImage: RouteHandler = async (request, reply)=> {
+        try {
+            const { id } = RouteParamsSchema.parse(request.params)
+            const data = AddImageSchema.parse(request.body)
+
+            const property = await this.model.findById(id)
+
+            //validate property id
+            if (!property) return reply.status(404).send({message: "Property not found!"})
+
+            await this.model.createImage(id, data)
+
+            return reply.status(201).send()
+
+        } catch (error: any) {
+            return reply.status(500).send({message: error.message})
+        }
+    }
+
+    removeImage: RouteHandler = async (request, reply)=> {
+        try {
+            const { id, imageId } = RouteParamsSchema.parse(request.params)
+
+            const property = await this.model.findById(id)
+            const propertyImage = await this.model.findImageById(id, imageId as string)
+
+            //validate property id
+            if (!property) return reply.status(404).send({message: "Property not found!"})
+
+            //validate property image id
+            if (!propertyImage) return reply.status(404).send({message: "Image not found!"})
+
+            await this.model.deleteImage(id, imageId as string)
+
+            return reply.status(204).send()
+            
+        } catch (error: any) {
+            return reply.status(500).send({message: error.message})
+        }
+    }
+
 }

@@ -59,7 +59,7 @@ model PropertyImage {
   id String @id @default(uuid())
   url String
   cover Boolean @default(false)
-  propertyId String @unique
+  propertyId String
   property Property @relation(fields: [propertyId], references: [id])
 }
 
