@@ -28,6 +28,7 @@ services:
       - .:/usr/app
     environment:
       NODE_ENV: development
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/db_rentals
 
 volumes:
   db_data:

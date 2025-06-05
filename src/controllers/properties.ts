@@ -28,7 +28,7 @@ const CreatePropertySchema = z.object({
 
 const UpdatePropertySchema = CreatePropertySchema.partial()
 
-const GetIdSchema = z.object({
+const RouteParamsSchema = z.object({
     id: z.string()
 })
 
@@ -41,23 +41,23 @@ export class PropertiesController {
     index: RouteHandler = async (request, reply) => {
         try {
             const data = await this.model.find()
-            reply.send({data})
+            return reply.send({data})
         } catch (error: any) {
-            reply.status(500).send({message: error.message})
+            return reply.status(500).send({message: error.message})
         }
     }
 
     show: RouteHandler = async (request, reply) => {
         try {
-            const { id } = GetIdSchema.parse(request.params)
+            const { id } = RouteParamsSchema.parse(request.params)
             const property = await this.model.findById(id)
 
             //validate property id
             if (!property) return reply.status(404).send({message: "Property not found!"})
 
-            reply.send({data: property})
+            return reply.send({data: property})
         } catch (error: any) {
-            reply.status(500).send({message: error.message})
+            return reply.status(500).send({message: error.message})
         }
     }
 
@@ -65,30 +65,38 @@ export class PropertiesController {
         try {
             const body = CreatePropertySchema.parse(request.body)
             const newProperty = await this.model.create(body)
-            reply.status(201).send({data: newProperty})
+            return reply.status(201).send({data: newProperty})
         } catch (error: any) {
-            reply.status(500).send({message: error.message})
+            return reply.status(500).send({message: error.message})
         }
     }
 
     update: RouteHandler = async (request, reply) => {
         try {
-            const { id } = GetIdSchema.parse(request.params)
+            const { id } = RouteParamsSchema.parse(request.params)
             const body = UpdatePropertySchema.parse(request.body)
             const updatedProperty = await this.model.update(id, body)
-            reply.send({data: updatedProperty})
+
+            //validate property id
+            if (!updatedProperty) return reply.status(404).send({message: "Property not found!"})
+
+            return reply.send({data: updatedProperty})
         } catch (error: any) {
-            reply.status(500).send({message: error.message})
+            return reply.status(500).send({message: error.message})
         }
     }
 
     delete: RouteHandler = async (request, reply) => {
         try {
-            const { id } = GetIdSchema.parse(request.params)
-            await this.model.delete(id)
-            reply.send({message: "Property deleted successfuly!"})
+            const { id } = RouteParamsSchema.parse(request.params)
+            const deletedProperty = await this.model.delete(id)
+
+            //validate property id
+            if (!deletedProperty) return reply.status(404).send({message: "Property not found!"})
+
+            return reply.send({message: "Property deleted successfuly!"})
         } catch (error: any) {
-            reply.status(500).send({message: error.message})
+            return reply.status(500).send({message: error.message})
         }
     }
 }
