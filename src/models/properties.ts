@@ -5,7 +5,7 @@ interface IProperty {
     title: string
     description?: string
     price: number
-    status: "Available" | "Rented" | "Under_maintenance"
+    status?: "Available" | "Rented" | "Under_maintenance"
     size?: number
     bedrooms?: number
     bathrooms?: number
@@ -27,7 +27,7 @@ interface IProperty {
 
 export class PropertiesModel { 
     find = async (): Promise<Property[]> => {
-        return prisma.property.findMany()
+        return prisma.property.findMany({})
     }
 
     findById = async (id: string): Promise<Property | null> => {
@@ -43,6 +43,6 @@ export class PropertiesModel {
     }
 
     delete = async (id: string): Promise<Property | null> => {
-        return prisma.property.delete({where: { id }})
+        return prisma.property.delete({where: {id} })
     }
 }
