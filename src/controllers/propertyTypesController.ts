@@ -1,5 +1,5 @@
 import { RouteHandler } from "fastify";
-import prisma from "../database";
+import prisma from "../config/prisma";
 import { z } from "zod";
 
 const SaveTypeSchema = z.object({name: z.string()})
