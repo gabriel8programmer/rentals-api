@@ -5,7 +5,8 @@ import { envSchema } from "./types/env";
 
 // routers
 import propertiesRouter from "./routes/properties"
-import propertyTypesRouter from "./routes/property-types"
+import propertyTypesRouter from "./routes/propertyTypes"
+import authRouter from "./routes/auth"
 
 const app = Fastify()
 
@@ -17,7 +18,9 @@ const host = "0.0.0.0"
 // register endpoints
 app.register(propertiesRouter, {prefix: "/api"})
 app.register(propertyTypesRouter, {prefix: "/api"})
+app.register(authRouter, { prefix: "/api/auth" })
 
+// create server
 app.listen({port, host})
 .then(()=> console.log(`Server running on http://${host}:${port}`))
 .catch((error) => {

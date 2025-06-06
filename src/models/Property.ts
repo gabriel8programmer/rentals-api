@@ -1,6 +1,6 @@
 import prisma from "../config/prisma"
 import { Property, PropertyImage } from "@prisma/client"
-import { ICreateImageParams, ICreatePropertyParams, IPropertiesRepository } from "../repositories/propertiesRepository"
+import { ICreateImageParams, ICreatePropertyParams, IPropertiesRepository } from "../repositories/PropertiesRepository"
 
 export class PropertiesModel implements IPropertiesRepository { 
     find = async (): Promise<Property[]> => {

@@ -1,6 +1,6 @@
 import { RouteHandler } from "fastify";
-import { AddImageSchema, CreatePropertySchema, RouteParamsSchema, UpdatePropertySchema } from "../types/schemas/propertyRequestSchemas";
-import { PropertyServices } from "../services/propertyServices";
+import { AddImageSchema, CreatePropertySchema, RouteParamsSchema, UpdatePropertySchema } from "../types/schemas/PropertyRequestSchemas";
+import { PropertyServices } from "../services/PropertyServices";
 
 export class PropertiesController {
     constructor(private readonly propertyServices: PropertyServices){}

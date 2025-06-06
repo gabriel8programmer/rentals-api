@@ -20,6 +20,7 @@ model User {
   password String? 
   role UserRole @default(CLIENT)
   emailVerified Boolean @default(false)
+  socialLogin Boolean @default(false)
   client Client?
   agent Agent?
   createdAt DateTime @default(now())

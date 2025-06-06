@@ -1,6 +1,6 @@
 import { HttpError } from "../errors/HttpError";
-import { PropertiesModel } from "../models/properties";
-import { ICreateImageParams, ICreatePropertyParams } from "../repositories/propertiesRepository";
+import { PropertiesModel } from "../models/Property";
+import { ICreateImageParams, ICreatePropertyParams } from "../repositories/PropertiesRepository";
 
 export class PropertyServices {
 

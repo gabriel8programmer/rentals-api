@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { PropertyTypesController } from "../controllers/propertyTypesController";
+import { PropertyTypesController } from "../controllers/PropertyTypesController";
 
 export default async function router(app: FastifyInstance){
     const controller = new PropertyTypesController()
