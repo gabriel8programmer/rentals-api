@@ -20,6 +20,7 @@ app.register(propertiesRouter, {prefix: "/api"})
 app.register(propertyTypesRouter, {prefix: "/api"})
 app.register(authRouter, { prefix: "/api/auth" })
 
+
 // create server
 app.listen({port, host})
 .then(()=> console.log(`Server running on http://${host}:${port}`))

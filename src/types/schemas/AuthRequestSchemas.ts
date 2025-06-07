@@ -9,3 +9,9 @@ export const RegisterUserSchema = z.object({
 export const LoginSchema = RegisterUserSchema.pick({email: true, password: true})
 
 export const GetEmailOnlySchema = z.object({email: z.string().email() })
+
+export const ResetPasswordSchema = z.object({
+    email: z.string(),
+    newPassword: z.string(),
+    code: z.string()
+})

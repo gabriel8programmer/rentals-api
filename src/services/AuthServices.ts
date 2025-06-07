@@ -7,6 +7,7 @@ import { User } from "@prisma/client";
 import { deleteRedisAsync, existsRedisAsync, getRedisAsync, setRedisAsync, ttlRedisAsync } from "../config/redis";
 import { v4 as uuidv4 } from "uuid"
 import { ISendEmailOptions, sendEmail } from "../config/nodemailer";
+import { getFormatedEmailTemplate } from "../utils/emails";
 
 const env = envSchema.parse(process.env)
 
@@ -96,22 +97,62 @@ export class AuthServices {
     }
 
     forgotPassword = async (email: string)=> {
-        const user = await this.validateUserByEmail(email)
+        const { id } = await this.validateUserByEmail(email)
+
+        // generate verification code
+        const code = String(Math.floor(Math.random() * 10000)).padStart(4, "0")
+
+        // create template with code
+        const html = getFormatedEmailTemplate(code)
+
+        // get current code in redis
+        const currentCodes = await getRedisAsync(`code-${id}`)
+        const newCodes: string[] = currentCodes ? JSON.parse(currentCodes): []
+        
+        // add code in redis with default max time of 10 min and in max 3 codes generated
+        if (newCodes.length >= 3) throw new HttpError(401, "Max number of email checks reached (3)!")
+
+        newCodes.push(code)
+
+        await setRedisAsync(`code-${id}`, JSON.stringify(newCodes))
         
         // create send email options object
         const sendEmailOptions: ISendEmailOptions = {
             from: env.NODEMAILER_USER as string, 
             to: email,
-            subject: "Enviando um email",
-            text: "Testando envio simples de emails!",
-            html: ""
+            subject: "Verificação de email",
+            html: html
         }
 
         // send email
         return await sendEmail(sendEmailOptions)
     }
 
-    resetPassword = async (email: string, newPassword: string)=> {
+    resetPassword = async (params: {email: string, newPassword: string, code: string})=> {
+        const { email, newPassword, code } = params
 
+        const { id, password: currentPassword } = await this.validateUserByEmail(email)
+        const currentPasswordDecrypted = await bcrypt.compare(newPassword, currentPassword as string)
+
+        if (currentPasswordDecrypted) throw new HttpError(401, "The current password cannot be the same as the old one!")
+
+        // get current code in redis
+        const currentCodes = await getRedisAsync(`code-${id}`)
+        const newCodes: string[] = currentCodes ? JSON.parse(currentCodes): []
+
+        // validate if newCodes is empty
+        if (newCodes.length <= 0) throw new HttpError(400, "There is not any code verification saved!")
+        // validate if code exists in newCodes
+        if (!newCodes.includes(code)) throw new HttpError(400, "Invalid or expired code!")
+
+        
+        // encrypt new password
+        const password = await bcrypt.hash(newPassword, 10)
+
+        // delete code verified
+        await deleteRedisAsync(`code-${id}`)
+
+        // udpate password
+        await this.usersModel.updateById(id, { password })
     }
 }

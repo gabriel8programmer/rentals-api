@@ -1,6 +1,6 @@
 import { RouteHandler } from "fastify";
 import { AuthServices } from "../services/AuthServices";
-import { LoginSchema, RegisterUserSchema, GetEmailOnlySchema } from "../types/schemas/AuthRequestSchemas";
+import { LoginSchema, RegisterUserSchema, GetEmailOnlySchema, ResetPasswordSchema } from "../types/schemas/AuthRequestSchemas";
 
 export class AuthController {
     constructor(private readonly authServices: AuthServices) {}
@@ -64,7 +64,12 @@ export class AuthController {
 
     reset: RouteHandler = async (request, reply)=> {
         try {
+            const body = ResetPasswordSchema.parse(request.body)
             
+            await this.authServices.resetPassword(body)
+
+            return { message: "Password reseted successfuly!" }
+
         } catch (error: any) {
             return reply.status(error.status ?? 500).send({message: error.message})
         }   
