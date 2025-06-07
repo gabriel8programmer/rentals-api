@@ -28,77 +28,7 @@ export class AuthServices {
         return user
     }
 
-    registerUser = async (params: {name: string, email: string, password: string})=> {
-        // get password in params
-        const { password: rawPassword } = params
-
-        // encrypt password
-        const password = await bcrypt.hash(rawPassword, 10)
-
-        const user = await this.usersModel.create({...params, password})
-        const userData: Omit<User, "password"> = user
-        return {data: userData}
-    }
-
-    login = async (params: {email: string, password: string}) => {
-        const { password: rawPassword, email } = params
-
-        const user = await this.usersModel.findByEmail(email)
-        const verifyPassword = await bcrypt.compare(rawPassword, user?.password as string)
-
-        if (!user || !verifyPassword) throw new HttpError(401, "Invalid Login!")
-
-        // generate new default jwt token
-        const payload = { id: user.id }
-        const accessToken = await this.generateDefaultJwt(payload)
-
-        // generate refresh token with uuid v4
-        const refreshToken = uuidv4()
-
-        // save accesstoken and refresh token in the redis
-        await setRedisAsync(`access-token-${user.id}`, accessToken, 86400)
-        await setRedisAsync(`refresh-token-${user.id}`, refreshToken, 2592000)
-
-        const userData: Omit<User, "password"> = user 
-
-        return { data: userData, accessToken, refreshToken}
-    }
-
-    logout = async (email: string)=> {
-        const {id} = await this.validateUserByEmail(email)
-
-        // remove tokens from redis
-        await deleteRedisAsync(`access-token-${id}`)
-        await deleteRedisAsync(`refresh-token-${id}`)
-    }
-
-    refresh = async (email: string, clientRefreshToken: string) => {
-        const {id} = await this.validateUserByEmail(email)
-
-        if (!clientRefreshToken) throw new HttpError(401, "Token is required!")
-
-        const parsedToken = await clientRefreshToken.split(" ")[1]
-       
-        // test if tokens exists
-        const currentRefreshToken = await getRedisAsync(`refresh-token-${id}`)
-        const refreshTokenExists = await existsRedisAsync(`refresh-token-${id}`)
-
-        if (!refreshTokenExists || currentRefreshToken !== parsedToken) throw new HttpError(401, "Token invalid or expired!")
-
-        // generate new accesstoken and regenerate refresh token too
-        const accessToken = await this.generateDefaultJwt({id})
-        const refreshToken = uuidv4()
-
-        // update redis tokens
-        await setRedisAsync(`access-token-${id}`, accessToken, 86400)
-        await setRedisAsync(`refresh-token-${id}`, refreshToken, 2592000)
-
-        return { accessToken, refreshToken }
-    }
-
-    forgotPassword = async (email: string)=> {
-        const { id } = await this.validateUserByEmail(email)
-
+    private sendEmailVerificationCodeByUserId = async (id: string, email: string)=> {
         // generate verification code
         const code = String(Math.floor(Math.random() * 10000)).padStart(4, "0")
 
@@ -128,23 +58,119 @@ export class AuthServices {
         return await sendEmail(sendEmailOptions)
     }
 
-    resetPassword = async (params: {email: string, newPassword: string, code: string})=> {
-        const { email, newPassword, code } = params
-
-        const { id, password: currentPassword } = await this.validateUserByEmail(email)
-        const currentPasswordDecrypted = await bcrypt.compare(newPassword, currentPassword as string)
-
-        if (currentPasswordDecrypted) throw new HttpError(401, "The current password cannot be the same as the old one!")
-
+    private validateVerificationCodeByUserId = async (id: string, code: string)=> {
         // get current code in redis
         const currentCodes = await getRedisAsync(`code-${id}`)
         const newCodes: string[] = currentCodes ? JSON.parse(currentCodes): []
 
         // validate if newCodes is empty
         if (newCodes.length <= 0) throw new HttpError(400, "There is not any code verification saved!")
+
         // validate if code exists in newCodes
         if (!newCodes.includes(code)) throw new HttpError(400, "Invalid or expired code!")
+    }
 
+    registerUser = async (params: {name: string, email: string, password: string})=> {
+        // get password in params
+        const { password: rawPassword } = params
+
+        // encrypt password
+        const password = await bcrypt.hash(rawPassword, 10)
+
+        const user = await this.usersModel.create({...params, password})
+        const userData: Omit<User, "password"> = user
+        return {data: userData}
+    }
+
+    login = async (params: {email: string, password: string}) => {
+        const { password: rawPassword, email } = params
+
+        const user = await this.usersModel.findByEmail(email)
+        const verifyPassword = await bcrypt.compare(rawPassword, user?.password as string)
+
+        if (!user || !verifyPassword) throw new HttpError(401, "Invalid Login!")
+
+        // verify email if user email verified is equals false
+        if (!user.emailVerified) {
+            const dataEmail = await this.sendEmailVerificationCodeByUserId(user.id, email)
+            return { data: dataEmail, status: "Unverified" }
+        }
+
+        // generate new default jwt token
+        const payload = { id: user.id }
+        const accessToken = await this.generateDefaultJwt(payload)
+
+        // generate refresh token with uuid v4
+        const refreshToken = uuidv4()
+
+        // save accesstoken and refresh token in the redis
+        await setRedisAsync(`access-token-${user.id}`, accessToken, 86400)
+        await setRedisAsync(`refresh-token-${user.id}`, refreshToken, 2592000)
+
+        const userData: Omit<User, "password"> = user 
+
+        return { data: userData, accessToken, refreshToken}
+    }
+
+    verifyEmail = async (email: string, code: string) => {
+        const { id } = await this.validateUserByEmail(email)
+
+         // verify code
+        await this.validateVerificationCodeByUserId(id, code)
+        
+        //update verified email for true
+        await this.usersModel.updateById(id, { emailVerified: true })
+    }
+
+    logout = async (email: string)=> {
+        const {id} = await this.validateUserByEmail(email)
+
+        // remove tokens from redis
+        await deleteRedisAsync(`access-token-${id}`)
+        await deleteRedisAsync(`refresh-token-${id}`)
+    }
+
+    refresh = async (email: string, clientRefreshToken: string) => {
+        const {id, socialLogin, emailVerified} = await this.validateUserByEmail(email)
+
+        if (!clientRefreshToken) throw new HttpError(401, "Token is required!")
+
+        const parsedToken = await clientRefreshToken.split(" ")[1]
+       
+        // test if tokens exists
+        const currentRefreshToken = await getRedisAsync(`refresh-token-${id}`)
+        const refreshTokenExists = await existsRedisAsync(`refresh-token-${id}`)
+
+        if (!refreshTokenExists || currentRefreshToken !== parsedToken) throw new HttpError(401, "Token invalid or expired!")
+
+        // generate new accesstoken and regenerate refresh token too
+        const accessToken = await this.generateDefaultJwt({id})
+        const refreshToken = uuidv4()
+
+        // update redis tokens
+        await setRedisAsync(`access-token-${id}`, accessToken, 86400)
+        await setRedisAsync(`refresh-token-${id}`, refreshToken, 2592000)
+
+        return { accessToken, refreshToken }
+    }
+
+    forgotPassword = async (email: string)=> {
+        const { id, socialLogin, emailVerified } = await this.validateUserByEmail(email)
+
+        return await this.sendEmailVerificationCodeByUserId(id, email)
+    }
+
+    resetPassword = async (params: {email: string, newPassword: string, code: string})=> {
+        const { email, newPassword, code } = params
+
+        const { id, password: currentPassword, socialLogin, emailVerified } = await this.validateUserByEmail(email)
+        const currentPasswordDecrypted = await bcrypt.compare(newPassword, currentPassword as string)
+
+        // verify code
+        await this.validateVerificationCodeByUserId(id, code)
+
+        // test if old password and new password are the same
+        if (currentPasswordDecrypted) throw new HttpError(401, "The current password cannot be the same as the old one!")
         
         // encrypt new password
         const password = await bcrypt.hash(newPassword, 10)

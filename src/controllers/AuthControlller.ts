@@ -1,6 +1,6 @@
 import { RouteHandler } from "fastify";
 import { AuthServices } from "../services/AuthServices";
-import { LoginSchema, RegisterUserSchema, GetEmailOnlySchema, ResetPasswordSchema } from "../types/schemas/AuthRequestSchemas";
+import { LoginSchema, RegisterUserSchema, GetEmailOnlySchema, ResetPasswordSchema, VerifyEmailSchema } from "../types/schemas/AuthRequestSchemas";
 
 export class AuthController {
     constructor(private readonly authServices: AuthServices) {}
@@ -19,7 +19,24 @@ export class AuthController {
         try {
             const body = LoginSchema.parse(request.body)
             const data = await this.authServices.login(body)
+
+            if (data.status && data.status === "Unverified"){
+                return { message: "Email verification required. Please, verify your email inbox to continue!" }
+            }
+
             return { data, message: "Logged successfuly!"}
+        } catch (error: any) {
+            return reply.status(error.status ?? 500).send({message: error.message})
+        }   
+    }
+
+    verify: RouteHandler = async (request, reply)=> {
+        try {
+            const { email, code } = VerifyEmailSchema.parse(request.body)
+
+            await this.authServices.verifyEmail(email, code)
+
+            return { message: "Email verified successfuly!"}
         } catch (error: any) {
             return reply.status(error.status ?? 500).send({message: error.message})
         }   

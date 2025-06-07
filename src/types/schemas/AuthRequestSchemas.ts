@@ -15,3 +15,5 @@ export const ResetPasswordSchema = z.object({
     newPassword: z.string(),
     code: z.string()
 })
+
+export const VerifyEmailSchema = ResetPasswordSchema.pick({email: true, code: true})
