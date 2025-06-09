@@ -7,6 +7,7 @@ import { envSchema } from "./types/env";
 import propertiesRouter from "./routes/properties"
 import propertyTypesRouter from "./routes/propertyTypes"
 import authRouter from "./routes/auth"
+import usersRouter from "./routes/users"
 
 const app = Fastify()
 
@@ -16,10 +17,10 @@ const host = "0.0.0.0"
 // register plugins
 
 // register endpoints
+app.register(authRouter, { prefix: "/api/auth" })
 app.register(propertiesRouter, {prefix: "/api"})
 app.register(propertyTypesRouter, {prefix: "/api"})
-app.register(authRouter, { prefix: "/api/auth" })
-
+app.register(usersRouter, {prefix: "/api"})
 
 // create server
 app.listen({port, host})
