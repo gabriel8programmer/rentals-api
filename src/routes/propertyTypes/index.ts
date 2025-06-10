@@ -4,8 +4,8 @@ import { PropertyTypesController } from "../../controllers/PropertyTypesControll
 export async function propertyTypesRouter(app: FastifyInstance){
     const controller = new PropertyTypesController()
 
-    app.get("/property-types", controller.index)
-    app.post("/property-types", controller.save)
-    app.patch("/property-types/:id", controller.update)
-    app.delete("/property-types/:id", controller.delete)   
+    app.get("/property-types", {schema: {tags: ["Property types"]} }, controller.index)
+    app.post("/property-types", {schema: {tags: ["Property types"]} }, controller.save)
+    app.patch("/property-types/:id", {schema: {tags: ["Property types"]} }, controller.update)
+    app.delete("/property-types/:id", {schema: {tags: ["Property types"]} }, controller.delete)   
 }
