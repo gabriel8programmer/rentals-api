@@ -1,8 +1,8 @@
 
 import { FastifyInstance } from "fastify";
-import { UsersController } from "../controllers/UsersController";
+import { UsersController } from "../../controllers/UsersController";
 
-export default async function router(app: FastifyInstance) {
+export async function usersRouter(app: FastifyInstance) {
     // get instances
     const controller = new UsersController()
 

@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
-import { PropertyTypesController } from "../controllers/PropertyTypesController";
+import { PropertyTypesController } from "../../controllers/PropertyTypesController";
 
-export default async function router(app: FastifyInstance){
+export async function propertyTypesRouter(app: FastifyInstance){
     const controller = new PropertyTypesController()
 
     app.get("/property-types", controller.index)

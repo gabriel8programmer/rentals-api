@@ -1,26 +1,49 @@
 
+
 import "dotenv/config"
-import Fastify from "fastify";
-import { envSchema } from "./types/env";
+import { fastify } from "fastify";
+import { envSchema } from "./schemas/env";
 
-// routers
-import propertiesRouter from "./routes/properties"
-import propertyTypesRouter from "./routes/propertyTypes"
-import authRouter from "./routes/auth"
-import usersRouter from "./routes/users"
+// get plugins
 
-const app = Fastify()
+// zod
+import { serializerCompiler, validatorCompiler, ZodTypeProvider} from "fastify-type-provider-zod"
 
+// error handler
+import { ErrorsHandlerPlugin } from "./plugins/errors"
+
+// cors
+import { fastifyCors } from "@fastify/cors"
+
+// swagger
+import { fastifySwagger } from "@fastify/swagger"
+import { fastifySwaggerUi } from "@fastify/swagger-ui"
+import { swaggerConfig } from "./config/swagger";
+
+// routes
+import { routes } from "./routes";
+
+// initial config
+const app = fastify().withTypeProvider<ZodTypeProvider>()
 const port = envSchema.parse(process.env).PORT || 3000
 const host = "0.0.0.0"
 
-// register plugins
+// Add schema validator and serializer
+app.setSerializerCompiler(serializerCompiler)
+app.setValidatorCompiler(validatorCompiler)
+
+//config cors
+app.register(fastifyCors, { origin: "*" })
+
+// config swagger
+app.register(fastifySwagger, swaggerConfig)
+app.register(fastifySwaggerUi, { routePrefix: "/docs"})
+
+// register error handler plugin
+app.register(ErrorsHandlerPlugin)
 
 // register endpoints
-app.register(authRouter, { prefix: "/api/auth" })
-app.register(propertiesRouter, {prefix: "/api"})
-app.register(propertyTypesRouter, {prefix: "/api"})
-app.register(usersRouter, {prefix: "/api"})
+app.register(routes, {prefix: "/api"})
 
 // create server
 app.listen({port, host})

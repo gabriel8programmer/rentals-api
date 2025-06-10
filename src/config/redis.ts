@@ -1,10 +1,10 @@
 import "dotenv/config"
 import Redis from "ioredis";
-import { envSchema } from "../types/env";
+import { envSchema } from "../schemas/env";
 
 const redisUrl = envSchema.parse(process.env).REDIS_URL as string
 
-const redis = new Redis(redisUrl)
+export const redis = new Redis(redisUrl)
 
 // set redis key
 export const setRedisAsync = async (key: string, value: string, ex: number = 600)=> {
@@ -31,5 +31,3 @@ export const existsRedisAsync = async (key: string) => {
 export const ttlRedisAsync = async (key: string): Promise<number> => {
   return await redis.ttl(key)
 }
-
-export default redis

@@ -2,7 +2,7 @@ import { HttpError } from "../errors/HttpError";
 import { UsersModel } from "../models/User";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
-import { envSchema } from "../types/env";
+import { envSchema } from "../schemas/env";
 import { User } from "@prisma/client";
 import { deleteRedisAsync, existsRedisAsync, getRedisAsync, setRedisAsync, ttlRedisAsync } from "../config/redis";
 import { v4 as uuidv4 } from "uuid"

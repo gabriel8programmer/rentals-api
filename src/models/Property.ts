@@ -1,4 +1,4 @@
-import prisma from "../config/prisma"
+import { prisma } from "../config/prisma"
 import { Property, PropertyImage } from "@prisma/client"
 import { ICreateImageParams, ICreatePropertyParams, IPropertiesRepository } from "../repositories/PropertiesRepository"
 

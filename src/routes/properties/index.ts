@@ -1,10 +1,10 @@
 
 import { FastifyInstance } from "fastify";
-import { PropertiesController } from "../controllers/PropertiesController";
-import { PropertiesModel } from "../models/Property";
-import { PropertyServices } from "../services/PropertyServices";
+import { PropertiesController } from "../../controllers/PropertiesController";
+import { PropertiesModel } from "../../models/Property";
+import { PropertyServices } from "../../services/PropertyServices";
 
-export default async function router(app: FastifyInstance){
+export async function propertiesRouter(app: FastifyInstance){
     // get instances
     const model = new PropertiesModel()
     const service = new PropertyServices(model)

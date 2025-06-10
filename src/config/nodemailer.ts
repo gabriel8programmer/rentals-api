@@ -1,6 +1,6 @@
 import "dotenv/config"
 import { createTransport } from "nodemailer"
-import { envSchema } from "../types/env"
+import { envSchema } from "../schemas/env"
 
 const env = envSchema.parse(process.env)
 

@@ -1,3 +1,4 @@
+import { SwaggerOptions } from "@fastify/swagger";
 import { z } from "zod";
 
 export const RegisterUserSchema = z.object({
