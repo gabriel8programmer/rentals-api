@@ -7,7 +7,7 @@ export interface ICreateUserParams {
     password?: string
     role?: "ADMIN" | "AGENT" | "CLIENT"
     emailVerified?: boolean
-    socialLogin?: boolean
+    socialLogged?: boolean
 }
 
 export interface IUsersRepository {

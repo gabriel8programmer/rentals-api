@@ -1,18 +1,18 @@
 import { RouteHandler } from "fastify";
 import { AuthServices } from "../services/AuthServices";
-import { LoginSchema, RegisterUserSchema, GetEmailOnlySchema, ResetPasswordSchema, VerifyEmailSchema } from "../schemas/auth";
+import { LoginBodySchema, RegisterUserBody, GetEmailOnlySchema, ResetPasswordBodySchema, VerifyEmailBodySchema } from "../schemas/auth";
 
 export class AuthController {
     constructor(private readonly authServices: AuthServices) {}
 
     register: RouteHandler = async (request, reply)=> {
-        const body = RegisterUserSchema.parse(request.body)
+        const body = RegisterUserBody.parse(request.body)
         const data = await this.authServices.registerUser(body)
         return reply.status(201).send({ data, message: "Warning: Log in to verify your email!" })
     }
 
     login: RouteHandler = async (request, reply)=> {
-        const body = LoginSchema.parse(request.body)
+        const body = LoginBodySchema.parse(request.body)
         const data = await this.authServices.login(body)
 
         if (data.status && data.status === "Unverified"){
@@ -23,7 +23,7 @@ export class AuthController {
     }
 
     verify: RouteHandler = async (request, reply)=> {
-        const { email, code } = VerifyEmailSchema.parse(request.body)
+        const { email, code } = VerifyEmailBodySchema.parse(request.body)
         await this.authServices.verifyEmail(email, code)
         return { message: "Email verified successfuly!"}
     }
@@ -50,7 +50,7 @@ export class AuthController {
     }
 
     reset: RouteHandler = async (request, reply)=> {
-        const body = ResetPasswordSchema.parse(request.body)
+        const body = ResetPasswordBodySchema.parse(request.body)
         await this.authServices.resetPassword(body)
         return { message: "Password reseted successfuly!" }
     }
