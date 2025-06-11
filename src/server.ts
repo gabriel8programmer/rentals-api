@@ -28,6 +28,9 @@ const app = fastify().withTypeProvider<ZodTypeProvider>()
 const port = envSchema.parse(process.env).PORT || 3000
 const host = "0.0.0.0"
 
+// register error handler plugin
+app.register(ErrorsHandlerPlugin)
+
 // Add schema validator and serializer
 app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
@@ -38,9 +41,6 @@ app.register(fastifyCors, { origin: "*" })
 // config swagger
 app.register(fastifySwagger, swaggerConfig)
 app.register(fastifySwaggerUi, { routePrefix: "/docs"})
-
-// register error handler plugin
-app.register(ErrorsHandlerPlugin)
 
 // register endpoints
 app.register(routes, {prefix: "/api"})

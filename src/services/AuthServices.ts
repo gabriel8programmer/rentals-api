@@ -28,6 +28,14 @@ export class AuthServices {
         return user
     }
 
+    private encryptPassword = async (password: string) => {
+        return bcrypt.hash(password, 10)
+    }
+
+    private validatePassword = async (password: string, hashedPassword: string): Promise<Boolean> => {
+        return await bcrypt.compare(password, hashedPassword)
+    }
+
     private sendEmailVerificationCodeByUserId = async (id: string, email: string)=> {
         // generate verification code
         const code = String(Math.floor(Math.random() * 10000)).padStart(4, "0")
@@ -75,20 +83,22 @@ export class AuthServices {
         const { password: rawPassword } = params
 
         // encrypt password
-        const password = await bcrypt.hash(rawPassword, 10)
+        const password = await this.encryptPassword(rawPassword)
 
         const user = await this.usersModel.create({...params, password})
         const userData: Omit<User, "password"> = user
-        return {data: userData}
+        return userData
     }
 
     login = async (params: {email: string, password: string}) => {
         const { password: rawPassword, email } = params
 
-        const user = await this.usersModel.findByEmail(email)
-        const verifyPassword = await bcrypt.compare(rawPassword, user?.password as string)
+        //validate user
+        const user = await this.validateUserByEmail(email)
 
-        if (!user || !verifyPassword) throw new HttpError(401, "Invalid Login!")
+        // verify password
+        const verifyEmail = await this.validatePassword(rawPassword, user.password as string)
+        if (!verifyEmail) throw new HttpError(401, "Invalid Email or password!") 
 
         // verify email if user email verified is equals false
         if (!user.emailVerified) {
@@ -113,6 +123,7 @@ export class AuthServices {
     }
 
     verifyEmail = async (email: string, code: string) => {
+        //validate user
         const { id } = await this.validateUserByEmail(email)
 
          // verify code
@@ -123,6 +134,7 @@ export class AuthServices {
     }
 
     logout = async (email: string)=> {
+        //validate user
         const {id} = await this.validateUserByEmail(email)
 
         // remove tokens from redis
@@ -131,7 +143,8 @@ export class AuthServices {
     }
 
     refresh = async (email: string, clientRefreshToken: string) => {
-        const {id, socialLogin, emailVerified} = await this.validateUserByEmail(email)
+        //validate user
+        const {id, socialLogged, emailVerified} = await this.validateUserByEmail(email)
 
         if (!clientRefreshToken) throw new HttpError(401, "Token is required!")
 
@@ -155,16 +168,17 @@ export class AuthServices {
     }
 
     forgotPassword = async (email: string)=> {
-        const { id, socialLogin, emailVerified } = await this.validateUserByEmail(email)
-
+        //validate user
+        const { id, socialLogged, emailVerified } = await this.validateUserByEmail(email)
         return await this.sendEmailVerificationCodeByUserId(id, email)
     }
 
     resetPassword = async (params: {email: string, newPassword: string, code: string})=> {
         const { email, newPassword, code } = params
 
-        const { id, password: currentPassword, socialLogin, emailVerified } = await this.validateUserByEmail(email)
-        const currentPasswordDecrypted = await bcrypt.compare(newPassword, currentPassword as string)
+        //validate user
+        const { id, password: currentPassword, socialLogged, emailVerified } = await this.validateUserByEmail(email)
+        const currentPasswordDecrypted = await this.validatePassword(newPassword, currentPassword as string)
 
         // verify code
         await this.validateVerificationCodeByUserId(id, code)
@@ -173,7 +187,7 @@ export class AuthServices {
         if (currentPasswordDecrypted) throw new HttpError(401, "The current password cannot be the same as the old one!")
         
         // encrypt new password
-        const password = await bcrypt.hash(newPassword, 10)
+        const password = await this.encryptPassword(newPassword)
 
         // delete code verified
         await deleteRedisAsync(`code-${id}`)

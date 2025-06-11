@@ -4,8 +4,8 @@ import { AuthServices } from "../../services/AuthServices";
 import { AuthController } from "../../controllers/AuthController";
 import { FastifyTypedInstance } from "../../types/fasfityInstance/types";
 import { ForgotPasswordBodySchema, LoginBodySchema, LogoutBodySchema, RefreshBodySchema, RegisterUserBody, RegisterUserResponse, ResetPasswordBodySchema, VerifyEmailBodySchema } from "../../schemas/auth";
-import { z } from "zod/v4";
 import { DefaultErrorResponseSchema } from "../../schemas/errors";
+import { z } from "zod/v4";
 
 export async function authRouter(app: FastifyTypedInstance) {
     // get instances
@@ -18,8 +18,13 @@ export async function authRouter(app: FastifyTypedInstance) {
         schema: {
             description: "Register a new user with client role",
             tags: ["Auth"],
-            body: RegisterUserBody
-        } 
+            body: RegisterUserBody,
+            response: {
+                201: RegisterUserResponse,
+                400: DefaultErrorResponseSchema.describe("Bad Request!"),
+                500: DefaultErrorResponseSchema.describe("Internal Server Error!")
+            }
+        }
     }, controller.register)
 
     //document login route

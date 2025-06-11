@@ -1,10 +1,15 @@
-import { FastifyError, FastifyInstance } from "fastify";
+import { FastifyInstance } from "fastify";
 
 export async function ErrorsHandlerPlugin(app: FastifyInstance){
-    app.addHook("onError", async (request, reply, error: FastifyError)=> {
-        return reply.status(error.statusCode as number).send({
-            message: error.message,
-            code: error.code
+    app.setErrorHandler(async (error, request, reply)=> {
+        const statusCode = error.statusCode ? error.statusCode: 500
+
+        if (reply.sent) return
+
+        return reply.status(statusCode).send({
+            message: statusCode === 500? "There was a internal server error!" :error.message,
+            error: error.name,
+            statusCode: error.statusCode
         })
     })
 }

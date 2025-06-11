@@ -7,8 +7,9 @@ export const RegisterUserBody = z.object({
     password: z.string()
 })
 
-export const RegisterUserResponse = {
-    "201": z.object({
+export const RegisterUserResponse = z.object({
+    message: z.string().default("Warning: Log in to verify your email!"),
+    data: z.object({
         name: z.string(),
         email: z.string(),
         role: z.enum(["ADMIN", "AGENT", "CLIENT"]),
@@ -16,10 +17,8 @@ export const RegisterUserResponse = {
         socialLogged: z.boolean(),
         createdAt: z.date(),
         updatedAt: z.date()
-    }).describe("User Created!"),
-
-    "400": DefaultErrorResponseSchema.describe("Bad Request!")
-}
+    })
+}).describe("User Created!")
 
 export const LoginBodySchema = RegisterUserBody.pick({email: true, password: true})
 

@@ -1,11 +1,12 @@
 import { RouteHandler } from "fastify";
 import { AuthServices } from "../services/AuthServices";
-import { LoginBodySchema, RegisterUserBody, GetEmailOnlySchema, ResetPasswordBodySchema, VerifyEmailBodySchema } from "../schemas/auth";
+import { LoginBodySchema, RegisterUserBody, GetEmailOnlySchema, ResetPasswordBodySchema, VerifyEmailBodySchema, RegisterUserResponse } from "../schemas/auth";
+import { z } from "zod/v4";
 
 export class AuthController {
     constructor(private readonly authServices: AuthServices) {}
 
-    register: RouteHandler = async (request, reply)=> {
+    register: RouteHandler = async (request, reply): Promise<z.infer<typeof RegisterUserResponse>> => {
         const body = RegisterUserBody.parse(request.body)
         const data = await this.authServices.registerUser(body)
         return reply.status(201).send({ data, message: "Warning: Log in to verify your email!" })
@@ -19,7 +20,7 @@ export class AuthController {
             return { message: "Email verification required. Please, verify your email inbox to continue!" }
         }
 
-        return { data, message: "Logged successfuly!"}
+        return { ...data, message: "Logged successfuly!"}
     }
 
     verify: RouteHandler = async (request, reply)=> {
