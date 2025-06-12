@@ -1,29 +1,29 @@
-import { User } from "@prisma/client";
-import { ICreateUserParams, IUsersRepository } from "../UsersRepository";
-import { prisma } from "../../config/prisma";
+import { User } from '@prisma/client'
+import { ICreateUserParams, IUsersRepository } from '../UsersRepository'
+import { prisma } from '../../config/prisma'
 
 export class PrismaUsersRepository implements IUsersRepository {
-    find = async (): Promise<User[]> => {
-        return await prisma.user.findMany()
-    }
+  find = async (): Promise<User[]> => {
+    return await prisma.user.findMany()
+  }
 
-    findById = async (id: string): Promise<User | null> => {
-        return await prisma.user.findUnique({where: {id} })
-    }
-    
-    findByEmail = async (email: string): Promise<User | null> => {
-        return await prisma.user.findUnique({where: {email} })
-    }
+  findById = async (id: string): Promise<User | null> => {
+    return await prisma.user.findUnique({ where: { id } })
+  }
 
-    create = async (data: ICreateUserParams): Promise<User> => {
-        return await prisma.user.create({ data })
-    }
+  findByEmail = async (email: string): Promise<User | null> => {
+    return await prisma.user.findUnique({ where: { email } })
+  }
 
-    updateById = async (id: string, data: Partial<ICreateUserParams>): Promise<User | null> => {
-        return await prisma.user.update({where: {id}, data })
-    }
+  create = async (data: ICreateUserParams): Promise<User> => {
+    return await prisma.user.create({ data })
+  }
 
-    deleteById = async (id: string): Promise<void> => {
-        await prisma.user.delete({where: {id} })
-    }
+  updateById = async (id: string, data: Partial<ICreateUserParams>): Promise<User | null> => {
+    return await prisma.user.update({ where: { id }, data })
+  }
+
+  deleteById = async (id: string): Promise<void> => {
+    await prisma.user.delete({ where: { id } })
+  }
 }

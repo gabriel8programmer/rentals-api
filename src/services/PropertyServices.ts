@@ -1,83 +1,82 @@
-import { HttpError } from "../errors/HttpError";
-import { PrismaPropertiesRepository } from "../repositories/prisma/PrismaPropertiesRepository";
-import { ICreateImageParams, ICreatePropertyParams } from "../repositories/PropertiesRepository";
+import { HttpError } from '../errors/HttpError'
+import { PrismaPropertiesRepository } from '../repositories/prisma/PrismaPropertiesRepository'
+import { ICreateImageParams, ICreatePropertyParams } from '../repositories/PropertiesRepository'
 
 export class PropertyServices {
+  constructor(private readonly propertiesModel: PrismaPropertiesRepository) {}
 
-    constructor(private readonly propertiesModel: PrismaPropertiesRepository){}
+  private validatePropertyId = async (id: string) => {
+    const property = await this.propertiesModel.findById(id)
 
-    private validatePropertyId = async (id: string)=> {
-        const property = await this.propertiesModel.findById(id)
-        
-        if (!property) throw new HttpError(404, "Property not found!")
+    if (!property) throw new HttpError(404, 'Property not found!')
 
-        return
-    }
+    return
+  }
 
-    private validateImageId = async (id: string, imageId: string)=> {
-        const image = await this.propertiesModel.findImageByIdFromProperty(id, imageId)
+  private validateImageId = async (id: string, imageId: string) => {
+    const image = await this.propertiesModel.findImageByIdFromProperty(id, imageId)
 
-        if (!image) throw new HttpError(404, "Image not found!")
+    if (!image) throw new HttpError(404, 'Image not found!')
 
-        return
-    }
+    return
+  }
 
-    getAllProperties = async () => {
-        const properties = await this.propertiesModel.find()
-        return properties
-    }
+  getAllProperties = async () => {
+    const properties = await this.propertiesModel.find()
+    return properties
+  }
 
-    getPropertyById = async (id: string)=> {
-        const property = await this.propertiesModel.findById(id)
+  getPropertyById = async (id: string) => {
+    const property = await this.propertiesModel.findById(id)
 
-        // validate property id
-        await this.validatePropertyId(id)
+    // validate property id
+    await this.validatePropertyId(id)
 
-        return property
-    }
+    return property
+  }
 
-    createProperty = async (params: ICreatePropertyParams)=> {
-        const property = await this.propertiesModel.create(params)
-        return property
-    }
+  createProperty = async (params: ICreatePropertyParams) => {
+    const property = await this.propertiesModel.create(params)
+    return property
+  }
 
-    udpatePropertyById = async (id: string, params: Partial<ICreatePropertyParams>)=> {
-        // validate property id
-        await this.validatePropertyId(id)
+  udpatePropertyById = async (id: string, params: Partial<ICreatePropertyParams>) => {
+    // validate property id
+    await this.validatePropertyId(id)
 
-        const property = await this.propertiesModel.updateById(id, params)
-        return property
-    }
+    const property = await this.propertiesModel.updateById(id, params)
+    return property
+  }
 
-    deletePropertyById = async (id: string)=> {
-        // validate property id
-        await this.validatePropertyId(id)
+  deletePropertyById = async (id: string) => {
+    // validate property id
+    await this.validatePropertyId(id)
 
-        await this.propertiesModel.deleteById(id)        
-    }
+    await this.propertiesModel.deleteById(id)
+  }
 
-    getImagesFromProperty = async (id: string)=> {
-        // validate property id
-        await this.validatePropertyId(id)
+  getImagesFromProperty = async (id: string) => {
+    // validate property id
+    await this.validatePropertyId(id)
 
-        const images = await this.propertiesModel.findImagesFromProperty(id)
-        return images
-    }
+    const images = await this.propertiesModel.findImagesFromProperty(id)
+    return images
+  }
 
-    addImageFromProperty = async (id: string, params: ICreateImageParams)=> {
-        // validate property id
-        await this.validatePropertyId(id)
+  addImageFromProperty = async (id: string, params: ICreateImageParams) => {
+    // validate property id
+    await this.validatePropertyId(id)
 
-        await this.propertiesModel.addImageInProperty(id, params)
-    }
+    await this.propertiesModel.addImageInProperty(id, params)
+  }
 
-    removeImageByIdFromProperty = async (id: string, imageId: string)=> {
-        // validate property id
-        await this.validatePropertyId(id)
+  removeImageByIdFromProperty = async (id: string, imageId: string) => {
+    // validate property id
+    await this.validatePropertyId(id)
 
-        // validate property id and imageId
-        await this.validateImageId(id, imageId)
+    // validate property id and imageId
+    await this.validateImageId(id, imageId)
 
-        await this.propertiesModel.removeImageByIdFromProperty(id, imageId)
-    }
+    await this.propertiesModel.removeImageByIdFromProperty(id, imageId)
+  }
 }

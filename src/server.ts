@@ -1,32 +1,30 @@
-
-
-import "dotenv/config"
-import { fastify } from "fastify";
-import { EnvSchema } from "./schemas/env";
+import 'dotenv/config'
+import { fastify } from 'fastify'
+import { EnvSchema } from './schemas/env'
 
 // get plugins
 
 // zod
-import { serializerCompiler, validatorCompiler, ZodTypeProvider} from "fastify-type-provider-zod"
+import { serializerCompiler, validatorCompiler, ZodTypeProvider } from 'fastify-type-provider-zod'
 
 // error handler
-import { ErrorsHandlerPlugin } from "./plugins/errors"
+import { ErrorsHandlerPlugin } from './plugins/errors'
 
 // cors
-import { fastifyCors } from "@fastify/cors"
+import { fastifyCors } from '@fastify/cors'
 
 // swagger
-import { fastifySwagger } from "@fastify/swagger"
-import { fastifySwaggerUi } from "@fastify/swagger-ui"
-import { swaggerConfig } from "./config/swagger";
+import { fastifySwagger } from '@fastify/swagger'
+import { fastifySwaggerUi } from '@fastify/swagger-ui'
+import { swaggerConfig } from './config/swagger'
 
 // routes
-import { routes } from "./routes";
+import { routes } from './routes'
 
 // initial config
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 const port = EnvSchema.parse(process.env).PORT || 3000
-const host = "0.0.0.0"
+const host = '0.0.0.0'
 
 // register error handler plugin
 app.register(ErrorsHandlerPlugin)
@@ -36,19 +34,20 @@ app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
 
 //config cors
-app.register(fastifyCors, { origin: "*" })
+app.register(fastifyCors, { origin: '*' })
 
 // config swagger
 app.register(fastifySwagger, swaggerConfig)
-app.register(fastifySwaggerUi, { routePrefix: "/docs"})
+app.register(fastifySwaggerUi, { routePrefix: '/docs' })
 
 // register endpoints
-app.register(routes, {prefix: "/api"})
+app.register(routes, { prefix: '/api' })
 
 // create server
-app.listen({port, host})
-.then(()=> console.log(`Server running on http://${host}:${port}`))
-.catch((error) => {
+app
+  .listen({ port, host })
+  .then(() => console.log(`Server running on http://${host}:${port}`))
+  .catch(error => {
     console.error(`Failed to start server ${error.message}`)
     process.exit(1)
-})
+  })

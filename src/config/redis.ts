@@ -1,30 +1,30 @@
-import "dotenv/config"
-import Redis from "ioredis";
-import { EnvSchema } from "../schemas/env";
+import 'dotenv/config'
+import Redis from 'ioredis'
+import { EnvSchema } from '../schemas/env'
 
 const redisUrl = EnvSchema.parse(process.env).REDIS_URL as string
 
 export const redis = new Redis(redisUrl)
 
 // set redis key
-export const setRedisAsync = async (key: string, value: string, ex: number = 600)=> {
-    await redis.set(key, value, "EX", ex)
+export const setRedisAsync = async (key: string, value: string, ex: number = 600) => {
+  await redis.set(key, value, 'EX', ex)
 }
 
 // get redis key
-export const getRedisAsync = async (key: string): Promise<string | null>=> {
-    return await redis.get(key)
+export const getRedisAsync = async (key: string): Promise<string | null> => {
+  return await redis.get(key)
 }
 
 // delete redis key
 export const deleteRedisAsync = async (key: string) => {
-    await redis.del(key)
+  await redis.del(key)
 }
 
 // exists redis key
 export const existsRedisAsync = async (key: string) => {
-    const result = await redis.exists(key)
-    return result === 1
+  const result = await redis.exists(key)
+  return result === 1
 }
 
 // verify redis key expiration time

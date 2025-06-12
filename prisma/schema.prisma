@@ -9,147 +9,147 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" 
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id String @id @default(uuid())
-  name String 
-  email String @unique
-  password String? 
-  role UserRole @default(CLIENT)
-  emailVerified Boolean @default(false)
-  socialLogged Boolean @default(false)
-  client Client?
-  agent Agent?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  password      String?
+  role          UserRole @default(CLIENT)
+  emailVerified Boolean  @default(false)
+  socialLogged  Boolean  @default(false)
+  client        Client?
+  agent         Agent?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model Client {
-  id String @id @default(uuid())
-  phone String
-  cpf String
-  rg String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userId String @unique
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id             String          @id @default(uuid())
+  phone          String
+  cpf            String
+  rg             String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  userId         String          @unique
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   rentalRequests RentalRequest[]
-  rentals Rental[]
+  rentals        Rental[]
 }
 
 model Agent {
-  id String @id @default(uuid())
-  bio String
-  license String
+  id        String   @id @default(uuid())
+  bio       String
+  license   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  userId String @unique
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model PropertyType {
-  id String @id @default(uuid())
-  name String
+  id       String     @id @default(uuid())
+  name     String
   property Property[]
 }
 
 model PropertyImage {
-  id String @id @default(uuid())
-  url String
-  cover Boolean @default(false)
+  id         String   @id @default(uuid())
+  url        String
+  cover      Boolean  @default(false)
   propertyId String
-  property Property @relation(fields: [propertyId], references: [id])
+  property   Property @relation(fields: [propertyId], references: [id])
 }
 
 model Property {
-  id String @id @default(uuid())
-  title String
-  description String?
-  status PropertyStatus @default(Available)
-  price Decimal @db.Money
-  size Decimal? @db.Decimal(10,2)
-  bedrooms Int?
-  bathrooms Int?
-  parkingSpaces Int?
-  location Json? @db.JsonB
+  id             String          @id @default(uuid())
+  title          String
+  description    String?
+  status         PropertyStatus  @default(Available)
+  price          Decimal         @db.Money
+  size           Decimal?        @db.Decimal(10, 2)
+  bedrooms       Int?
+  bathrooms      Int?
+  parkingSpaces  Int?
+  location       Json?           @db.JsonB
   propertyTypeId String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  propertyType PropertyType @relation(fields: [propertyTypeId], references: [id])
-  images PropertyImage[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  propertyType   PropertyType    @relation(fields: [propertyTypeId], references: [id])
+  images         PropertyImage[]
   rentalRequests RentalRequest[]
-  rentals Rental[]
+  rentals        Rental[]
 }
 
 model RentalRequest {
-  id String @id @default(uuid())
-  clientId String
+  id         String              @id @default(uuid())
+  clientId   String
   propertyId String
-  status RentalRequestStatus @default(Processing)
-  budget Decimal @db.Money
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  client Client @relation(fields: [clientId], references: [id])
-  property Property @relation(fields: [propertyId], references: [id])
+  status     RentalRequestStatus @default(Processing)
+  budget     Decimal             @db.Money
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+  client     Client              @relation(fields: [clientId], references: [id])
+  property   Property            @relation(fields: [propertyId], references: [id])
 }
 
 model Rental {
-  id String @id @default(uuid())
-  clientId String
-  propertyId String
-  total Decimal @db.Money
-  contractInitDate DateTime
-  contractEndDate DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  client Client @relation(fields: [clientId], references: [id])
-  property Property @relation(fields: [propertyId], references: [id])
-  payments Payment[]
+  id                  String               @id @default(uuid())
+  clientId            String
+  propertyId          String
+  total               Decimal              @db.Money
+  contractInitDate    DateTime
+  contractEndDate     DateTime
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  client              Client               @relation(fields: [clientId], references: [id])
+  property            Property             @relation(fields: [propertyId], references: [id])
+  payments            Payment[]
   maintenanceRequests MaintenanceRequest[]
-  maintenances Maintenance[]
+  maintenances        Maintenance[]
 }
 
 model PaymentMethod {
-  id Int @id @default(autoincrement())
-  name String
+  id       Int       @id @default(autoincrement())
+  name     String
   payments Payment[]
 }
 
 model Payment {
-  id String @id @default(uuid())
-  rentalId String
-  paymentDate DateTime
-  status PaymentStatus @default(Pending)
+  id              String        @id @default(uuid())
+  rentalId        String
+  paymentDate     DateTime
+  status          PaymentStatus @default(Pending)
   paymentMethodId Int
-  amound Decimal @db.Money
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  paymentMethod PaymentMethod @relation(fields: [paymentMethodId], references: [id])
-  rental Rental @relation(fields: [rentalId], references: [id])
+  amound          Decimal       @db.Money
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  paymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
+  rental          Rental        @relation(fields: [rentalId], references: [id])
 }
 
 model MaintenanceRequest {
-  id String @id @default(uuid())
-  rentalId String
-  status MaintenanceRequestStatus @default(Processing)
-  notes String @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  rental Rental @relation(fields: [rentalId], references: [id])
+  id        String                   @id @default(uuid())
+  rentalId  String
+  status    MaintenanceRequestStatus @default(Processing)
+  notes     String                   @db.Text
+  createdAt DateTime                 @default(now())
+  updatedAt DateTime                 @updatedAt
+  rental    Rental                   @relation(fields: [rentalId], references: [id])
 }
 
 model Maintenance {
-  id String @id @default(uuid())
-  rentalId String
-  status MaintenanceStatus @default(In_Progress)
-  notes String @db.Text
-  total Decimal @db.Money @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  rental Rental @relation(fields: [rentalId], references: [id])
+  id        String            @id @default(uuid())
+  rentalId  String
+  status    MaintenanceStatus @default(In_Progress)
+  notes     String            @db.Text
+  total     Decimal           @default(0) @db.Money
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  rental    Rental            @relation(fields: [rentalId], references: [id])
 }
 
 enum UserRole {
@@ -169,7 +169,7 @@ enum RentalRequestStatus {
   Accepted
   Refused
   Canceled
-} 
+}
 
 enum PaymentStatus {
   Pending
