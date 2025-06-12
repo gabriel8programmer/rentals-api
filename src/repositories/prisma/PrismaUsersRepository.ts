@@ -1,6 +1,6 @@
 import { User } from "@prisma/client";
-import { ICreateUserParams, IUsersRepository } from "../repositories/UsersRepository";
-import { prisma } from "../config/prisma";
+import { ICreateUserParams, IUsersRepository } from "../UsersRepository";
+import { prisma } from "../../config/prisma";
 
 export class UsersModel implements IUsersRepository {
     find = async (): Promise<User[]> => {

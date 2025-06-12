@@ -1,5 +1,5 @@
 
-import { UsersModel } from "../../models/User";
+import { UsersModel } from "../../repositories/prisma/PrismaUsersRepository";
 import { AuthServices } from "../../services/AuthServices";
 import { AuthController } from "../../controllers/AuthController";
 import { FastifyTypedInstance } from "../../types/fasfityInstance/types";

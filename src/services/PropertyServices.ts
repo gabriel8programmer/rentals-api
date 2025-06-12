@@ -1,5 +1,5 @@
 import { HttpError } from "../errors/HttpError";
-import { PropertiesModel } from "../models/Property";
+import { PropertiesModel } from "../repositories/prisma/PrismaPropertiesRepository";
 import { ICreateImageParams, ICreatePropertyParams } from "../repositories/PropertiesRepository";
 
 export class PropertyServices {

@@ -1,5 +1,5 @@
 import { HttpError } from "../errors/HttpError";
-import { UsersModel } from "../models/User";
+import { UsersModel } from "../repositories/prisma/PrismaUsersRepository";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import { envSchema } from "../schemas/env";

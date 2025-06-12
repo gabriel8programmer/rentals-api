@@ -1,5 +1,5 @@
 import { HttpError } from "../errors/HttpError";
-import { UsersModel } from "../models/User";
+import { UsersModel } from "../repositories/prisma/PrismaUsersRepository";
 import { ICreateUserParams } from "../repositories/UsersRepository";
 import bcrypt from "bcrypt"
 
