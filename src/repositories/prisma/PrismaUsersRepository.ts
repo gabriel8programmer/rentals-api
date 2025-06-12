@@ -2,7 +2,7 @@ import { User } from "@prisma/client";
 import { ICreateUserParams, IUsersRepository } from "../UsersRepository";
 import { prisma } from "../../config/prisma";
 
-export class UsersModel implements IUsersRepository {
+export class PrismaUsersRepository implements IUsersRepository {
     find = async (): Promise<User[]> => {
         return await prisma.user.findMany()
     }

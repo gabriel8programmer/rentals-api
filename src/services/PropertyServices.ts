@@ -1,10 +1,10 @@
 import { HttpError } from "../errors/HttpError";
-import { PropertiesModel } from "../repositories/prisma/PrismaPropertiesRepository";
+import { PrismaPropertiesRepository } from "../repositories/prisma/PrismaPropertiesRepository";
 import { ICreateImageParams, ICreatePropertyParams } from "../repositories/PropertiesRepository";
 
 export class PropertyServices {
 
-    constructor(private readonly propertiesModel: PropertiesModel){}
+    constructor(private readonly propertiesModel: PrismaPropertiesRepository){}
 
     private validatePropertyId = async (id: string)=> {
         const property = await this.propertiesModel.findById(id)

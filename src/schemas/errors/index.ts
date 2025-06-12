@@ -9,7 +9,11 @@ const errorStatus = {
 
 type ErrorStatusCode = keyof typeof errorStatus
 
-export const ErrorResponseSchema = z.null()
+export const ErrorResponseSchema = z.object({
+    message: z.string(),
+    error: z.string(),
+    statusCode: z.number(),
+})
 
 export const setErrorResponses = (...status: ErrorStatusCode[]) => {
   const responses: Record<number, z.ZodTypeAny> = {}

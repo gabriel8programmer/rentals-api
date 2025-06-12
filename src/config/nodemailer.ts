@@ -1,8 +1,8 @@
 import "dotenv/config"
 import { createTransport } from "nodemailer"
-import { envSchema } from "../schemas/env"
+import { EnvSchema } from "../schemas/env"
 
-const env = envSchema.parse(process.env)
+const env = EnvSchema.parse(process.env)
 
 const transportOptions = {
     host: env.NODEMAILER_HOST,

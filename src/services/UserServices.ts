@@ -1,36 +1,57 @@
 import { HttpError } from "../errors/HttpError";
-import { UsersModel } from "../repositories/prisma/PrismaUsersRepository";
+import { PrismaUsersRepository } from "../repositories/prisma/PrismaUsersRepository";
 import { ICreateUserParams } from "../repositories/UsersRepository";
-import bcrypt from "bcrypt"
+import { encryptPassword } from "../utils/passwordValidators";
 
 export class UserServices {
-    constructor(private readonly usersModel: UsersModel) {}
+    constructor(private readonly usersRepository: PrismaUsersRepository) {}
 
-    getAllUsers = async ()=> {
-
-    }
-
-    createUser = async (params: ICreateUserParams)=> {
-        const { password: currentPassword } = params
-
-        const password = await bcrypt.hash(currentPassword as string, 10)
-
-        return await this.usersModel.create({...params, password})
-    }
-
-    getUserById = async (id: string) => {
-        const user = await this.usersModel.findById(id)
+    private validateUserById = async (id: string)=> {
+        const user = await this.usersRepository.findById(id)
 
         if (!user) throw new HttpError(404, "User not found!")
 
         return user
     }
 
-    updateUserById = async (id: string, params: Partial<Omit<ICreateUserParams, "role" | "socialLogin">>) => {
-        const user = await this.getUserById(id)
+    getAllUsers = async ()=> {
+        return this.usersRepository.find()
+    }
+
+    createUser = async (params: Omit<ICreateUserParams, "socialLogin">)=> {
+        const { password: currentPassword } = params
+        const password = await encryptPassword(currentPassword as string)
+        return await this.usersRepository.create({...params, password})
+    }
+
+    getUserById = async (id: string) => {
+        return this.validateUserById(id)
+    }
+
+    updateUserById = async (id: string, params: Partial<Omit<ICreateUserParams, "socialLogged">>) => {
+        await this.validateUserById(id)
+
+        const { password: rawPassword, email, emailVerified} = params
+
+        let data = {}
+
+        // validate email
+        if (email && !emailVerified) data = {emailVerified: false}
+
+        // update password
+        if (rawPassword) {
+            const password = await encryptPassword(rawPassword)
+            data = { ...data, password }
+        }
+
+        Object.assign(params, {...data})
+
+        const userUpdated = await this.usersRepository.updateById(id, params) 
+        return userUpdated
     }
 
     deleteUserById = async (id: string)=> {
-        const user = await this.getUserById(id)
+        await this.validateUserById(id)
+        await this.usersRepository.deleteById(id)
     }
 }

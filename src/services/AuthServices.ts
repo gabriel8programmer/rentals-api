@@ -1,18 +1,19 @@
 import { HttpError } from "../errors/HttpError";
-import { UsersModel } from "../repositories/prisma/PrismaUsersRepository";
+import { PrismaUsersRepository } from "../repositories/prisma/PrismaUsersRepository";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
-import { envSchema } from "../schemas/env";
+import { EnvSchema } from "../schemas/env";
 import { User } from "@prisma/client";
 import { deleteRedisAsync, existsRedisAsync, getRedisAsync, setRedisAsync, ttlRedisAsync } from "../config/redis";
 import { v4 as uuidv4 } from "uuid"
 import { ISendEmailOptions, sendEmail } from "../config/nodemailer";
 import { getFormatedEmailTemplate } from "../utils/emails";
+import { encryptPassword, validatePassword } from "../utils/passwordValidators";
 
-const env = envSchema.parse(process.env)
+const env = EnvSchema.parse(process.env)
 
 export class AuthServices {
-    constructor (private readonly usersModel: UsersModel) {}
+    constructor (private readonly usersModel: PrismaUsersRepository) {}
 
     private _jwt_secret_key = env.JWT_SECRET_KEY ?? "jwt_secret_key"
 
@@ -26,14 +27,6 @@ export class AuthServices {
         if (!user) throw new HttpError(404, "User not found!")
 
         return user
-    }
-
-    private encryptPassword = async (password: string) => {
-        return bcrypt.hash(password, 10)
-    }
-
-    private validatePassword = async (password: string, hashedPassword: string): Promise<Boolean> => {
-        return await bcrypt.compare(password, hashedPassword)
     }
 
     private sendEmailVerificationCodeByUserId = async (id: string, email: string)=> {
@@ -83,7 +76,7 @@ export class AuthServices {
         const { password: rawPassword } = params
 
         // encrypt password
-        const password = await this.encryptPassword(rawPassword)
+        const password = await encryptPassword(rawPassword)
 
         const user = await this.usersModel.create({...params, password})
         const userData: Omit<User, "password"> = user
@@ -97,7 +90,7 @@ export class AuthServices {
         const user = await this.validateUserByEmail(email)
 
         // verify password
-        const verifyEmail = await this.validatePassword(rawPassword, user.password as string)
+        const verifyEmail = await validatePassword(rawPassword, user.password as string)
         if (!verifyEmail) throw new HttpError(401, "Invalid Email or password!") 
 
         // verify email if user email verified is equals false
@@ -178,7 +171,7 @@ export class AuthServices {
 
         //validate user
         const { id, password: currentPassword, socialLogged, emailVerified } = await this.validateUserByEmail(email)
-        const currentPasswordDecrypted = await this.validatePassword(newPassword, currentPassword as string)
+        const currentPasswordDecrypted = await validatePassword(newPassword, currentPassword as string)
 
         // verify code
         await this.validateVerificationCodeByUserId(id, code)
@@ -187,7 +180,7 @@ export class AuthServices {
         if (currentPasswordDecrypted) throw new HttpError(401, "The current password cannot be the same as the old one!")
         
         // encrypt new password
-        const password = await this.encryptPassword(newPassword)
+        const password = await encryptPassword(newPassword)
 
         // delete code verified
         await deleteRedisAsync(`code-${id}`)

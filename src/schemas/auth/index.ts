@@ -37,7 +37,7 @@ export const VerifyEmailBodySchema = ResetPasswordBodySchema.pick({email: true, 
 
 export const DefaultResponseSchema = z.object({
     message: z.string()
-})
+}).describe("OK!")
 
 export const RegisterUserResponseSchema = z.object({
     message: z.string(),

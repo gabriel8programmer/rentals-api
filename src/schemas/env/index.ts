@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const envSchema = z.object({
+export const EnvSchema = z.object({
     PORT: z.coerce.number(),
     JWT_SECRET_KEY: z.string(),
     DATABASE_URL: z.string(),

@@ -2,7 +2,7 @@
 
 import "dotenv/config"
 import { fastify } from "fastify";
-import { envSchema } from "./schemas/env";
+import { EnvSchema } from "./schemas/env";
 
 // get plugins
 
@@ -25,7 +25,7 @@ import { routes } from "./routes";
 
 // initial config
 const app = fastify().withTypeProvider<ZodTypeProvider>()
-const port = envSchema.parse(process.env).PORT || 3000
+const port = EnvSchema.parse(process.env).PORT || 3000
 const host = "0.0.0.0"
 
 // register error handler plugin

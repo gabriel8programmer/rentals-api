@@ -2,8 +2,9 @@ import { z } from "zod"
 
 export const CreatePropertySchema = z.object({
     title: z.string(),
-    description: z.string().optional(),
     price: z.number(),
+    propertyTypeId: z.string(),
+    description: z.string().optional(),
     size: z.number().optional(),
     bedrooms: z.number().optional(),
     bathrooms: z.number().optional(),
@@ -20,8 +21,7 @@ export const CreatePropertySchema = z.object({
         longitude: z.string().optional(),
         location: z.string().optional(),
         postalCode: z.string().optional(),
-    }).optional(),
-    propertyTypeId: z.string()
+    }).optional()
 })
 
 export const UpdatePropertySchema = CreatePropertySchema.partial()

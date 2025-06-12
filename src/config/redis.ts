@@ -1,8 +1,8 @@
 import "dotenv/config"
 import Redis from "ioredis";
-import { envSchema } from "../schemas/env";
+import { EnvSchema } from "../schemas/env";
 
-const redisUrl = envSchema.parse(process.env).REDIS_URL as string
+const redisUrl = EnvSchema.parse(process.env).REDIS_URL as string
 
 export const redis = new Redis(redisUrl)
 

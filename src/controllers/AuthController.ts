@@ -40,7 +40,7 @@ export class AuthController {
 
         const data = await this.authServices.refresh(email, clientRefreshToken)
 
-        return {data, message: "Refreshed authetication tokens!"}       
+        return {data, message: "Authentication tokens updated!"}       
     }
 
     forgot: RouteHandlerMethod = async (request, reply)=> {

@@ -2,7 +2,7 @@ import { prisma } from "../../config/prisma"
 import { Property, PropertyImage } from "@prisma/client"
 import { ICreateImageParams, ICreatePropertyParams, IPropertiesRepository } from "../PropertiesRepository"
 
-export class PropertiesModel implements IPropertiesRepository { 
+export class PrismaPropertiesRepository implements IPropertiesRepository { 
     find = async (): Promise<Property[]> => {
         return prisma.property.findMany({})
     }
