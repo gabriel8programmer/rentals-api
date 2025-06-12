@@ -86,6 +86,18 @@ Você pode testar as rotas utilizando ferramentas como:
 
 <h2 id="rotas">📡 Rotas</h2>
 
+### 🔑 Endpoints de Autenticação
+
+| Método | Rota                        | Descrição                               | Autenticação |
+| ------ | --------------------------- | --------------------------------------- | ------------ |
+| POST   | `/api/auth/register`        | Registrar novo usuário                  | 🔓 Não       |
+| POST   | `/api/auth/login`           | Fazer Login                             | 🔓 Não       |
+| POST   | `/api/auth/verify-email`    | Verificar email                         | 🔓 Não       |
+| POST   | `/api/auth/refresh`         | Solicitar novos tokens de autenticação  | 🔓 Sim       |
+| POST   | `/api/auth/forgot-password` | Enviar código para recuperação de senha | 🔓 Não       |
+| POST   | `/api/auth/reset-password`  | Redefinir a senha                       | 🔓 Não       |
+
+
 <h2 id="dev">👨‍💻 Desenvolvedor</h2>
 
 Este projeto foi desenvolvido por Gabriel Pereira, com foco em aprendizado de nodejs, fastify, bancos relacionais, cache e arquitetura de software.
