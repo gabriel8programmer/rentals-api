@@ -3,9 +3,7 @@ import { UsersModel } from "../../models/User";
 import { AuthServices } from "../../services/AuthServices";
 import { AuthController } from "../../controllers/AuthController";
 import { FastifyTypedInstance } from "../../types/fasfityInstance/types";
-import { ForgotPasswordBodySchema, LoginBodySchema, LogoutBodySchema, RefreshBodySchema, RegisterUserBody, RegisterUserResponse, ResetPasswordBodySchema, VerifyEmailBodySchema } from "../../schemas/auth";
-import { DefaultErrorResponseSchema } from "../../schemas/errors";
-import { z } from "zod/v4";
+import { ForgotPasswordSchema, LoginSchema, LogoutSchema, RefreshSchema, RegisterSchema, ResetPasswordSchema, VerifyEmailSchema } from "./container";
 
 export async function authRouter(app: FastifyTypedInstance) {
     // get instances
@@ -13,71 +11,11 @@ export async function authRouter(app: FastifyTypedInstance) {
     const services = new AuthServices(model)
     const controller = new AuthController(services)
 
-    //document register route
-    app.post("/register", { 
-        schema: {
-            description: "Register a new user with client role",
-            tags: ["Auth"],
-            body: RegisterUserBody,
-            response: {
-                201: RegisterUserResponse,
-                400: DefaultErrorResponseSchema.describe("Bad Request!"),
-                500: DefaultErrorResponseSchema.describe("Internal Server Error!")
-            }
-        }
-    }, controller.register)
-
-    //document login route
-    app.post("/login", {
-        schema: {
-            description: "Todo login with email and password",
-            tags: ["Auth"],
-            body: LoginBodySchema
-        }
-    }, controller.login)
-
-    //document verify email route
-    app.post("/verify-email", { 
-        schema: {
-            description: "Verify email with Code",
-            tags: ["Auth"],
-            body: VerifyEmailBodySchema
-        } 
-    }, controller.verify)
-
-    //document logout route
-    app.post("/logout", {
-        schema: {
-            description: "Todo Logout with email",
-            tags: ["Auth"],
-            body: LogoutBodySchema
-        }
-    }, controller.logout)
-
-    //document refresh route
-    app.post("/refresh", {
-        schema: {
-            description: "Get new accessToken and refreshToken too",
-            tags: ["Auth"],
-            body: RefreshBodySchema
-        }
-    }, controller.refresh)
-
-    //document forgot password route
-    app.post("/forgot-password", {
-        schema: {
-            description: "Forgot password",
-            tags: ["Auth"],
-            body: ForgotPasswordBodySchema
-        }
-    }, controller.forgot)
-
-    //document reset password route
-    app.post("/reset-password", {
-         schema: {
-            description: "Reset password",
-            tags: ["Auth"],
-            body: ResetPasswordBodySchema
-        }
-    }, controller.reset)
+    app.post("/register", { schema: RegisterSchema }, controller.register)
+    app.post("/login", { schema: LoginSchema }, controller.login)
+    app.post("/verify-email", { schema: VerifyEmailSchema }, controller.verify)
+    app.post("/logout", { schema: LogoutSchema }, controller.logout)
+    app.post("/refresh", { schema: RefreshSchema }, controller.refresh)
+    app.post("/forgot-password", { schema: ForgotPasswordSchema }, controller.forgot)
+    app.post("/reset-password", { schema: ResetPasswordSchema }, controller.reset)
 }

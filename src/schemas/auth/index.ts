@@ -1,5 +1,4 @@
 import { z } from "zod/v4";
-import { DefaultErrorResponseSchema } from "../errors";
 
 export const RegisterUserBody = z.object({
     name: z.string(),
@@ -7,18 +6,16 @@ export const RegisterUserBody = z.object({
     password: z.string()
 })
 
-export const RegisterUserResponse = z.object({
-    message: z.string().default("Warning: Log in to verify your email!"),
-    data: z.object({
-        name: z.string(),
-        email: z.string(),
-        role: z.enum(["ADMIN", "AGENT", "CLIENT"]),
-        emailVerified: z.boolean(),
-        socialLogged: z.boolean(),
-        createdAt: z.date(),
-        updatedAt: z.date()
-    })
-}).describe("User Created!")
+export const UserDataSchema = z.object({
+    name: z.string(),
+    email: z.string(),
+    password: z.string(),
+    role: z.enum(["ADMIN", "AGENT", "CLIENT"]),
+    emailVerified: z.boolean(),
+    socialLogged: z.boolean(),
+    createdAt: z.date(),
+    updatedAt: z.date()
+})
 
 export const LoginBodySchema = RegisterUserBody.pick({email: true, password: true})
 
@@ -35,3 +32,35 @@ export const ResetPasswordBodySchema = z.object({
 })
 
 export const VerifyEmailBodySchema = ResetPasswordBodySchema.pick({email: true, code: true})
+
+// responses
+
+export const DefaultResponseSchema = z.object({
+    message: z.string()
+})
+
+export const RegisterUserResponseSchema = z.object({
+    message: z.string(),
+    data: UserDataSchema
+}).describe("Created!")
+
+export const LoginResponseSchema = z.object({
+    message: z.string(),
+    data: UserDataSchema.optional(),
+    accessToken: z.string().optional(),
+    refreshToken: z.string().optional()
+}).describe("OK!")
+
+export const RefreshResponseSchema = z.object({
+    message: z.string(),
+    data: z.object({
+        accessToken: z.string(),
+        refreshToken: z.string()
+    })
+})
+
+export const VerifyEmailResponseSchema = DefaultResponseSchema
+export const LogoutResponseSchema = DefaultResponseSchema
+export const ForgotPasswordResponseSchema = DefaultResponseSchema
+export const ResetPasswordResponseSchema = DefaultResponseSchema 
+
