@@ -46,22 +46,26 @@ git clone https://github.com/gabriel8programmer/rental-api
 cd rental-api
 ```
 
-#### 2. Crie o arquivo `.env` com o seguinte formato:
-
-```env
-PORT=3000 # Porta padrão (pode ser alterada nos arquivos Dockerfile e docker-compose.yaml)
-DATABASE_URL= # Será gerada automaticamente pelo Prisma; basta deixá-la configurada
-```
-
----
-
-#### 3. Rode o [docker compose](https://docs.docker.com/compose/) com o seguinte comando:
+#### 2. Rode o [docker compose](https://docs.docker.com/compose/) com o seguinte comando:
 
 ```bash
 docker compose up
 ```
 
 > ⚠️ Se as imagens dos containers ainda não estiverem presentes, o Docker fará o download automaticamente. Isso pode levar alguns minutos, dependendo da sua conexão e espaço em disco. Certifique-se de ter armazenamento suficiente disponível.
+
+#### 3. Crie as migrations do prisma:
+
+```bash
+npm run db:create
+```
+
+#### 4. Crie o arquivo `.env` com o seguinte formato:
+
+```env
+PORT=3000 # Porta padrão (pode ser alterada nos arquivos Dockerfile e docker-compose.yaml)
+DATABASE_URL= # Será gerada automaticamente pelo Prisma; basta deixá-la configurada
+```
 
 ---
 
