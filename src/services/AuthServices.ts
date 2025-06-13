@@ -1,35 +1,18 @@
 import { HttpError } from '../errors/HttpError'
 import { PrismaUsersRepository } from '../repositories/prisma/PrismaUsersRepository'
-import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
 import { EnvSchema } from '../schemas/env'
 import { User } from '@prisma/client'
-import {
-  deleteRedisAsync,
-  existsRedisAsync,
-  getRedisAsync,
-  setRedisAsync,
-  ttlRedisAsync,
-} from '../config/redis'
+import { deleteRedisAsync, existsRedisAsync, getRedisAsync, setRedisAsync } from '../config/redis'
 import { v4 as uuidv4 } from 'uuid'
 import { ISendEmailOptions, sendEmail } from '../config/nodemailer'
 import { getFormatedEmailTemplate } from '../utils/emails'
 import { encryptPassword, validatePassword } from '../utils/passwordValidators'
+import { generateDefaultJwt } from '../utils/generateJwtToken'
 
 const env = EnvSchema.parse(process.env)
 
 export class AuthServices {
   constructor(private readonly usersModel: PrismaUsersRepository) {}
-
-  private _jwt_secret_key = env.JWT_SECRET_KEY ?? 'jwt_secret_key'
-
-  private generateDefaultJwt = async (
-    payload: { id: string },
-    jwtKey: string = this._jwt_secret_key,
-    expiresIn: any = '1d',
-  ): Promise<string> => {
-    return await jwt.sign(payload, jwtKey, { expiresIn })
-  }
 
   private validateUserByEmail = async (email: string): Promise<User> => {
     const user = await this.usersModel.findByEmail(email)
@@ -111,7 +94,7 @@ export class AuthServices {
 
     // generate new default jwt token
     const payload = { id: user.id }
-    const accessToken = await this.generateDefaultJwt(payload)
+    const accessToken = await generateDefaultJwt(payload)
 
     // generate refresh token with uuid v4
     const refreshToken = uuidv4()
@@ -161,7 +144,7 @@ export class AuthServices {
       throw new HttpError(401, 'Token invalid or expired!')
 
     // generate new accesstoken and regenerate refresh token too
-    const accessToken = await this.generateDefaultJwt({ id })
+    const accessToken = await generateDefaultJwt({ id })
     const refreshToken = uuidv4()
 
     // update redis tokens
