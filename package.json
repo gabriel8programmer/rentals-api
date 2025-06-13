@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
-    "start": "node build/server.js"
+    "start": "node build/server.js",
+    "db:create": "prisma migrate dev --name create-tables"
   },
   "keywords": [],
   "author": "",
