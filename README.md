@@ -104,12 +104,16 @@ Você pode testar as rotas utilizando ferramentas como:
 
 <h2 id="dev">👨‍💻 Desenvolvedor</h2>
 
-Este projeto foi desenvolvido por Gabriel Pereira, com foco em aprendizado de nodejs, fastify, bancos relacionais, cache e arquitetura de software.
-
-
-<div>
-  <img  style="height: 150px" src="https://github.com/user-attachments/assets/c4df01b4-a935-4613-9eb9-aaf04d07b296" alt="Foto de perfil" />
-</div>
+<a href="https://portfolio-backend-bay-two.vercel.app/" target="_blank">
+  <table>
+  <tr>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/c4df01b4-a935-4613-9eb9-aaf04d07b296" height="150" /><br />
+      <strong>Gabriel Pereira</strong>
+    </td>
+  </tr>
+</table>
+</a>
 
 Sinta-se à vontade para entrar em contato em caso de dúvidas, sugestões ou propostas de colaboração!
 
