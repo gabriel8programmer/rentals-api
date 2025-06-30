@@ -1,8 +1,8 @@
 import fp from 'fastify-plugin'
 import { FastifyInstance } from 'fastify'
-import { HttpError } from '../../errors/HttpError'
-import { verifyJwtToken } from '../../utils/generateJwtToken'
-import { PrismaUsersRepository } from '../../repositories/prisma/PrismaUsersRepository'
+import { HttpError } from '../../errors/http-error'
+import { verifyJwtToken } from '../../utils/generate-jwt'
+import { PrismaUsersRepository } from '../../repositories/prisma/users-repository'
 
 export const verifyAuthToken = fp(async function (app: FastifyInstance) {
   app.addHook('preHandler', async (request, reply) => {

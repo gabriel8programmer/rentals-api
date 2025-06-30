@@ -4,7 +4,7 @@ import {
   ICreateImageParams,
   ICreatePropertyParams,
   IPropertiesRepository,
-} from '../PropertiesRepository'
+} from '../properties-repository'
 
 export class PrismaPropertiesRepository implements IPropertiesRepository {
   find = async (): Promise<Property[]> => {

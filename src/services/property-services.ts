@@ -1,6 +1,6 @@
-import { HttpError } from '../errors/HttpError'
-import { PrismaPropertiesRepository } from '../repositories/prisma/PrismaPropertiesRepository'
-import { ICreateImageParams, ICreatePropertyParams } from '../repositories/PropertiesRepository'
+import { HttpError } from '../errors/http-error'
+import { PrismaPropertiesRepository } from '../repositories/prisma/properties-repository'
+import { ICreateImageParams, ICreatePropertyParams } from '../repositories/properties-repository'
 
 export class PropertyServices {
   constructor(private readonly propertiesModel: PrismaPropertiesRepository) {}

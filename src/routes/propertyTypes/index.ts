@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify'
-import { PropertyTypesController } from '../../controllers/PropertyTypesController'
+import { PropertyTypesController } from '../../controllers/property-types-controller'
 import { ensureIsAdmin, verifyAuthToken } from '../../plugins/auth'
 import {
   DeletePropertyTypeOptions,
@@ -7,8 +7,8 @@ import {
   ShowPropertyTypesOptions,
   UpdateNamePropertyTypeOptions,
 } from './container'
-import { PrismaPropertyTypesRepository } from '../../repositories/prisma/PrismaPropertyTypesRepository'
-import { PropertyTypeServices } from '../../services/PropertyTypeServices'
+import { PrismaPropertyTypesRepository } from '../../repositories/prisma/property-types-repository'
+import { PropertyTypeServices } from '../../services/property-type-services'
 
 export async function propertyTypesRouter(app: FastifyInstance) {
   //get instances

@@ -1,5 +1,5 @@
 import { RouteHandlerMethod } from 'fastify'
-import { UserServices } from '../services/UserServices'
+import { UserServices } from '../services/user-services'
 import { SaveUserBodySchema, UpdateUserBodySchema, UserRequestParamsSchema } from '../schemas/users'
 
 export class UsersController {

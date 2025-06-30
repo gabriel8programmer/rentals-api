@@ -1,7 +1,7 @@
-import { HttpError } from '../errors/HttpError'
-import { PrismaUsersRepository } from '../repositories/prisma/PrismaUsersRepository'
-import { ICreateUserParams } from '../repositories/UsersRepository'
-import { encryptPassword } from '../utils/passwordValidators'
+import { HttpError } from '../errors/http-error'
+import { PrismaUsersRepository } from '../repositories/prisma/users-repository'
+import { ICreateUserParams } from '../repositories/users-repository'
+import { encryptPassword } from '../utils/password-validators'
 
 export class UserServices {
   constructor(private readonly usersRepository: PrismaUsersRepository) {}

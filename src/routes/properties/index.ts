@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify'
-import { PropertiesController } from '../../controllers/PropertiesController'
-import { PrismaPropertiesRepository } from '../../repositories/prisma/PrismaPropertiesRepository'
-import { PropertyServices } from '../../services/PropertyServices'
+import { PropertiesController } from '../../controllers/properties-controller'
+import { PrismaPropertiesRepository } from '../../repositories/prisma/properties-repository'
+import { PropertyServices } from '../../services/property-services'
 
 export async function propertiesRouter(app: FastifyInstance) {
   // get instances

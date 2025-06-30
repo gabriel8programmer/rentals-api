@@ -1,5 +1,5 @@
-import { HttpError } from '../errors/HttpError'
-import { PrismaPropertyTypesRepository } from '../repositories/prisma/PrismaPropertyTypesRepository'
+import { HttpError } from '../errors/http-error'
+import { PrismaPropertyTypesRepository } from '../repositories/prisma/property-types-repository'
 
 export class PropertyTypeServices {
   constructor(private readonly propertyTypesRepository: PrismaPropertyTypesRepository) {}

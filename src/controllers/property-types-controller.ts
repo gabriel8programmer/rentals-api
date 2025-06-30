@@ -1,8 +1,8 @@
 import { RouteHandlerMethod } from 'fastify'
 import { prisma } from '../config/prisma'
 import { z } from 'zod'
-import { HttpError } from '../errors/HttpError'
-import { PropertyTypeServices } from '../services/PropertyTypeServices'
+import { HttpError } from '../errors/http-error'
+import { PropertyTypeServices } from '../services/property-type-services'
 
 const SaveTypeSchema = z.object({ name: z.string() })
 const RouteParamsSchema = z.object({ id: z.string() })

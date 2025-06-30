@@ -1,5 +1,5 @@
 import { User } from '@prisma/client'
-import { ICreateUserParams, IUsersRepository } from '../UsersRepository'
+import { ICreateUserParams, IUsersRepository } from '../users-repository'
 import { prisma } from '../../config/prisma'
 
 export class PrismaUsersRepository implements IUsersRepository {

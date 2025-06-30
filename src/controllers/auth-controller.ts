@@ -1,5 +1,5 @@
 import { RouteHandlerMethod } from 'fastify'
-import { AuthServices } from '../services/AuthServices'
+import { AuthServices } from '../services/auth-services'
 import {
   LoginBodySchema,
   RegisterUserBody,

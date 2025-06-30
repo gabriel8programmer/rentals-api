@@ -1,13 +1,13 @@
-import { HttpError } from '../errors/HttpError'
-import { PrismaUsersRepository } from '../repositories/prisma/PrismaUsersRepository'
+import { HttpError } from '../errors/http-error'
+import { PrismaUsersRepository } from '../repositories/prisma/users-repository'
 import { EnvSchema } from '../schemas/env'
 import { User } from '@prisma/client'
 import { deleteRedisAsync, existsRedisAsync, getRedisAsync, setRedisAsync } from '../config/redis'
 import { v4 as uuidv4 } from 'uuid'
 import { ISendEmailOptions, sendEmail } from '../config/nodemailer'
 import { getFormatedEmailTemplate } from '../utils/emails'
-import { encryptPassword, validatePassword } from '../utils/passwordValidators'
-import { generateDefaultJwt } from '../utils/generateJwtToken'
+import { encryptPassword, validatePassword } from '../utils/password-validators'
+import { generateDefaultJwt } from '../utils/generate-jwt'
 
 const env = EnvSchema.parse(process.env)
 

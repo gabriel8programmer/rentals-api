@@ -1,7 +1,7 @@
-import { PrismaUsersRepository } from '../../repositories/prisma/PrismaUsersRepository'
-import { AuthServices } from '../../services/AuthServices'
-import { AuthController } from '../../controllers/AuthController'
-import { FastifyTypedInstance } from '../../types/fasfityInstance/types'
+import { PrismaUsersRepository } from '../../repositories/prisma/users-repository'
+import { AuthServices } from '../../services/auth-services'
+import { AuthController } from '../../controllers/auth-controller'
+import { FastifyTypedInstance } from '../../types/fastify/types'
 import {
   ForgotPasswordOptions,
   LoginOptions,

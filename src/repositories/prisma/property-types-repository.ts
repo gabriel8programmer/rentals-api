@@ -1,5 +1,5 @@
 import { PropertyType } from '@prisma/client'
-import { IPropertyTypesRepository } from '../PropertyTypesRepository'
+import { IPropertyTypesRepository } from '../property-types-repository'
 import { prisma } from '../../config/prisma'
 
 export class PrismaPropertyTypesRepository implements IPropertyTypesRepository {

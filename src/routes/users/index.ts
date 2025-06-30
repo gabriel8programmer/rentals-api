@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify'
-import { UsersController } from '../../controllers/UsersController'
-import { PrismaUsersRepository } from '../../repositories/prisma/PrismaUsersRepository'
-import { UserServices } from '../../services/UserServices'
+import { UsersController } from '../../controllers/users-controller'
+import { PrismaUsersRepository } from '../../repositories/prisma/users-repository'
+import { UserServices } from '../../services/user-services'
 import { ensureIsAdmin, verifyAuthToken } from '../../plugins/auth'
 import {
   DeleteUserOptions,

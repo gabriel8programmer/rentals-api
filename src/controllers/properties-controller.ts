@@ -5,7 +5,7 @@ import {
   RouteParamsSchema,
   UpdatePropertySchema,
 } from '../schemas/properties'
-import { PropertyServices } from '../services/PropertyServices'
+import { PropertyServices } from '../services/property-services'
 
 export class PropertiesController {
   constructor(private readonly propertyServices: PropertyServices) {}
